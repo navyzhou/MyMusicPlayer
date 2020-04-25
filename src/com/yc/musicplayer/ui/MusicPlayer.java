@@ -13,10 +13,16 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.DisposeEvent;
 
 public class MusicPlayer {
 	private Player playLrc;
 	protected Shell shell;
+	private Button btn_1;
+	private Button btn_2;
+	private Button btn_3;
+	private Button btn_4;
 
 	/**
 	 * Launch the application.
@@ -24,8 +30,8 @@ public class MusicPlayer {
 	 */
 	public static void main(String[] args) {
 		try {
-			MusicPlayer window = new MusicPlayer();
-			window.open();
+			ConstantData.player = new MusicPlayer();
+			ConstantData.player.open();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -59,17 +65,17 @@ public class MusicPlayer {
 		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 		shell.setLocation((dimension.width - shell.getSize().x) / 2 , (dimension.height - shell.getSize().y) / 2);
 
-		Button btn_1 = new Button(shell, SWT.NONE);
+		btn_1 = new Button(shell, SWT.NONE);
 		btn_1.setBounds(39, 136, 78, 30);
 		btn_1.setText("播放");
 
-		Button btn_2 = new Button(shell, SWT.NONE);
+		btn_2 = new Button(shell, SWT.NONE);
 		btn_2.setBounds(123, 136, 78, 30);
 		btn_2.setText("暂停");
 		btn_2.setEnabled(false);
 
 
-		Button btn_3 = new Button(shell, SWT.NONE);
+		btn_3 = new Button(shell, SWT.NONE);
 		btn_3.setBounds(299, 136, 73, 30);
 		btn_3.setText("停止");
 		btn_3.setEnabled(false);
@@ -82,7 +88,7 @@ public class MusicPlayer {
 		label.setForeground(SWTResourceManager.getColor(255, 140, 0));
 		label.setBounds(41, 28, 330, 56);
 
-		Button btn_4 = new Button(shell, SWT.NONE);
+		btn_4 = new Button(shell, SWT.NONE);
 		btn_4.setText("继续");
 		btn_4.setEnabled(false);
 		btn_4.setBounds(207, 136, 78, 30);
@@ -139,5 +145,20 @@ public class MusicPlayer {
 				playLrc.stop();
 			}
 		});
+
+		shell.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent arg0) {
+				if (playLrc != null) {
+					playLrc.stop();
+				}
+			}
+		});
+	}
+	
+	public void reset() {
+		btn_1.setEnabled(true);
+		btn_2.setEnabled(false);
+		btn_3.setEnabled(false);
+		btn_4.setEnabled(false);
 	}
 }

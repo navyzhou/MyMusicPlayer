@@ -132,11 +132,13 @@ public class Player {
 				index = 1;
 				int size = lrc.size();
 				boolean mark = false;
+				boolean end = false;
 				synchronized(thread) {
 					while (startStatus) {
 						time = clip.getMicrosecondPosition() / 1000;
-						if (time < lrc.get(index).getTime()) {
-							if (!mark) {
+						
+						if (!end && time < lrc.get(index).getTime() ) {
+							if (!mark ) {
 								Display.getDefault().asyncExec(new Runnable(){
 									@Override
 									public void run() {
@@ -148,7 +150,7 @@ public class Player {
 						} else {
 							index++;
 							if (index >= size) {
-								break;
+								end = true;
 							}
 							mark = false;
 						}
@@ -160,19 +162,31 @@ public class Player {
 								progressBar.setSelection( (int)( (float) time / timeLength * 100) );
 							}
 						});
+						if (time == timeLength) {
+							break;
+						}
+						
 						try {
 							sleep(100);
 						} catch (InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
-					Display.getDefault().asyncExec(new Runnable(){
-						@Override
-						public void run() {
-							progressBar.setSelection( 100 );
-						}
-					});
+					
+					try {
+						sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
+				
+				Display.getDefault().asyncExec(new Runnable(){
+					@Override
+					public void run() {
+						progressBar.setSelection(100);
+						ConstantData.player.reset();
+					}
+				});
 			}
 		};
 
