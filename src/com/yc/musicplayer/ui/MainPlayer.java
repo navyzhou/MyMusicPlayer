@@ -170,7 +170,7 @@ public class MainPlayer {
 		add_label.setBounds(220, 37, 32, 32);
 
 		// 默认检索路径
-		findMap3("D:\\musics");
+		findMap3("musics");
 		addMusicList(); // 添加到播放列表
 
 		Composite composite_5 = new Composite(composite, SWT.BORDER);

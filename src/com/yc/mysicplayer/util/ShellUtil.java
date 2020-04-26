@@ -113,7 +113,9 @@ public class ShellUtil {
 					if (tray != null) {
 						tray.dispose();
 					}
-					ConstantData.clip.close();
+					if (ConstantData.clip != null) {
+						ConstantData.clip.close();
+					}
 					shell.dispose();
 					System.exit(0);
 				// }
@@ -279,10 +281,11 @@ public class ShellUtil {
 		
 		menuItemClose.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				ConstantData.clip.close();
+				if (ConstantData.clip != null) {
+					ConstantData.clip.close();
+				}
 				tray.dispose();
 				shell.dispose();
-				display.close();
 				System.exit(0);
 			}
 		});
