@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 
+import com.yc.musicplayer.entity.ConstantData;
+
 public class Player {
 	public final Pattern pattern = Pattern.compile("(?<=\\[)[0-9].+?\\:[0-9].+?\\.[0-9].+?(?=\\])");		//匹配[xx:xx.xx]中的内容（不含[]）
 	public AudioInputStream ais;

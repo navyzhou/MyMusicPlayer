@@ -3,10 +3,11 @@ package com.yc.musicplayer.ui;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.wb.swt.SWTResourceManager;
-import org.eclipse.swt.widgets.Button;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import com.yc.musicplayer.entity.ConstantData;
+import com.yc.mysicplayer.util.ShellUtil;
+
+import org.eclipse.swt.widgets.Button;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.ProgressBar;
@@ -60,10 +61,8 @@ public class MusicPlayer {
 		shell.setImage(SWTResourceManager.getImage(MusicPlayer.class, "/images/yc.png"));
 		shell.setSize(450, 247);
 		shell.setText("音乐播放器");
-
-		// 界面居中显示
-		Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
-		shell.setLocation((dimension.width - shell.getSize().x) / 2 , (dimension.height - shell.getSize().y) / 2);
+		
+		ShellUtil.middlePosition(shell); // 居中显示
 
 		btn_1 = new Button(shell, SWT.NONE);
 		btn_1.setBounds(39, 136, 78, 30);
@@ -141,7 +140,6 @@ public class MusicPlayer {
 				btn_2.setEnabled(false);
 				btn_3.setEnabled(false);
 				btn_4.setEnabled(false);
-
 				playLrc.stop();
 			}
 		});
