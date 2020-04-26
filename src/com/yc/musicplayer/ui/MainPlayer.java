@@ -471,11 +471,16 @@ public class MainPlayer {
 		 */
 		public void startPlay() {
 			playIndex = y; // 记录当前播放的歌曲索引
-			lrc_label.setText(mf.getMname());
-			playColor();
-			playerList.get(preIndex).outColor(); // 恢复颜色
-			preIndex = y;
-			playerMusic.start(mf.getPath());
+			Display.getDefault().asyncExec(new Runnable() {
+				@Override
+				public void run() {
+					lrc_label.setText(mf.getMname());
+					playColor();
+					playerList.get(preIndex).outColor(); // 恢复颜色
+					preIndex = y;
+					playerMusic.start(mf.getPath());
+				}
+			});
 		}
 
 

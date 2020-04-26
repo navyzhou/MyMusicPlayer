@@ -1,4 +1,4 @@
-package com.yc.musicplayer;
+package com.yc.musicplayer.test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +19,7 @@ import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
 public class Player01 {
-	public final Pattern pattern = Pattern.compile("(?<=\\[)[0-9].+?\\:[0-9].+?\\.[0-9].+?(?=\\])");		//匹配[xx:xx.xx]中的内容（不含[]）
+	public final Pattern pattern = Pattern.compile("(?<=\\\\[)[0-9].+?\\\\:[0-9].+?(\\\\.[0-9].+)?(?=\\\\])");		//匹配[xx:xx.xx]中的内容（不含[]）
 	public AudioInputStream inputStream;
 	public SourceDataLine dataLine;
 	public AudioFormat fileFormat;
@@ -69,10 +69,15 @@ public class Player01 {
 	private long strToLong(String timeStr) {
 		String[] s = timeStr.split(":");
 		int min = Integer.parseInt(s[0]);
-		String[] ss = s[1].split("\\.");
-		int sec = Integer.parseInt(ss[0]);
-		int mill = Integer.parseInt(ss[1]);
-		return min * 60 * 1000 + sec * 1000 + mill * 10;
+		if (s[1].contains(".")) { // [00:00.00]
+			String[] ss = s[1].split("\\.");
+			int sec = Integer.parseInt(ss[0]);
+			int mill = Integer.parseInt(ss[1]);
+			return min * 60 * 1000 + sec * 1000 + mill * 10;
+		} else { // [00:00]
+			int sec = Integer.parseInt(s[1]);
+			return min * 60 * 1000 + sec * 1000;
+		}
 	}
 
 	/**

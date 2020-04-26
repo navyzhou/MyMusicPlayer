@@ -1,4 +1,4 @@
-package com.yc.musicplayer.ui;
+package com.yc.musicplayer.test;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;

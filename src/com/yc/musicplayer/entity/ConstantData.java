@@ -2,8 +2,8 @@ package com.yc.musicplayer.entity;
 
 import javax.sound.sampled.Clip;
 
+import com.yc.musicplayer.test.MusicPlayer;
 import com.yc.musicplayer.ui.MainPlayer;
-import com.yc.musicplayer.ui.MusicPlayer;
 
 public class ConstantData {
 	public static MusicPlayer player = null;

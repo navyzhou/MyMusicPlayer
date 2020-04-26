@@ -1,4 +1,4 @@
-package com.yc.musicplayer.ui;
+package com.yc.musicplayer.test;
 
 
 import java.io.BufferedReader;
