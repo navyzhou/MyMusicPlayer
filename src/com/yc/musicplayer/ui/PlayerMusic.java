@@ -7,6 +7,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,12 +31,14 @@ import com.yc.musicplayer.entity.ConstantData;
  * @author navy
  */
 public class PlayerMusic {
-	public final Pattern pattern = Pattern.compile("(?<=\\[)[0-9].+?\\:[0-9].+?(\\.[0-9].+)?(?=\\])");		//匹配[xx:xx.xx]中的内容（不含[]）
-	public AudioInputStream ais;
-	public AudioFormat format;
-	public ArrayList<Code> lrc = new ArrayList<Code>(); // 歌词列表
-	public boolean startStatus = true; // 启动状态
-	public Thread thread = null; // 播放线程
+	// ?<= 前瞻 说明是要匹配时间前面是 [ 的这种
+	private final Pattern pattern = Pattern.compile("(?<=\\[)[0-9]+?\\:[0-9]+?(\\.[0-9]+)?(?=\\])");		//匹配[xx:xx.xx]中的内容（不含[]）
+	private AudioInputStream ais;
+	private AudioFormat format;
+	private Hashtable<Long, String> lrcs = new Hashtable<Long, String>();  // 以时间为键，歌词为值
+	private List<Long> timeLrc = new ArrayList<Long>(); // 存储歌词对应的时间
+	private boolean startStatus = true; // 启动状态
+	private Thread thread = null; // 播放线程
 	private ProgressBar progressBar; // 进度条
 	private Label label; // 歌词显示
 	private int index = 1; // 歌词索引
@@ -54,10 +59,11 @@ public class PlayerMusic {
 		path = path.substring(0, path.lastIndexOf("\\")) + "\\lrc" +  path.substring(path.lastIndexOf("\\")).replace(".mp3", ".lrc");
 		File file = new File(path);
 		if (!file.exists() || !file.isFile()) {
-			lrc = null;
+			lrcs = null;
 			return;
 		}
-		lrc.clear();
+		
+		lrcs.clear(); // 清空歌词
 
 		try (FileInputStream fis = new FileInputStream(file);BufferedReader reader = new BufferedReader(new InputStreamReader(fis,"utf-8"))){
 			String lrcString = null;
@@ -77,10 +83,18 @@ public class PlayerMusic {
 	 */
 	public void parseLine(String line) {
 		Matcher matcher = pattern.matcher(line);
+		
+		String time = "";
+		String str = "";
+		long times = 0;
 		while (matcher.find()) { // 匹配获取每一句歌词
-			String time = matcher.group(); // 获取每句歌词前面的时间
-			String str = line.substring(line.indexOf(time) + time.length() + 1); // 获取后面的歌词
-			lrc.add(new Code(strToLong(time), str));
+			time = matcher.group(); // 获取每句歌词前面的时间
+			str = line.substring(line.indexOf(time) + time.length() + 1); // 获取后面的歌词
+			str = str.replaceAll("^(\\[[0-9]+?\\:[0-9]+?(\\.[0-9]+?)?\\])*", ""); // 处理一行有多个时间
+			
+			times = strToLong(time);
+			lrcs.put(times, str);
+			timeLrc.add(times);
 		}
 	}
 
@@ -127,7 +141,7 @@ public class PlayerMusic {
 			//初始化Clip
 			ConstantData.clip = AudioSystem.getClip();
 			ConstantData.clip.open(ais);
-			
+
 			timeLength = ConstantData.clip.getMicrosecondLength() / 1000; // 获取音频文件的时长
 		} catch (UnsupportedAudioFileException e) {
 			e.printStackTrace();
@@ -175,7 +189,7 @@ public class PlayerMusic {
 				startStatus = true;
 
 				int size = 0;
-				if (lrc == null || lrc.isEmpty()) {
+				if (lrcs == null || lrcs.isEmpty()) {
 					size = 0;
 					end = true; // 歌词结束
 					Display.getDefault().asyncExec(new Runnable(){
@@ -185,18 +199,19 @@ public class PlayerMusic {
 						}
 					});
 				} else {
-					size = lrc.size();
+					size = lrcs.size();
 				}
-
+				Collections.sort(timeLrc); // 根据歌词时间排序
+				
 				synchronized(thread) {
 					while (startStatus) {
 						time = ConstantData.clip.getMicrosecondPosition() / 1000;
-						if (!end && time < lrc.get(index).getTime() ) {
+						if (!end && time < timeLrc.get(index)) {
 							if (!mark ) {
 								Display.getDefault().asyncExec(new Runnable(){
 									@Override
 									public void run() {
-										label.setText(lrc.get(index - 1).getStr());
+										label.setText(lrcs.get(timeLrc.get(index)));
 									}
 								});
 							}
@@ -217,7 +232,7 @@ public class PlayerMusic {
 								progressBar.setSelection( (int)( (float) time / timeLength * 100) );
 							}
 						});
-						
+
 						if (time == timeLength) {
 							break;
 						}
@@ -228,7 +243,7 @@ public class PlayerMusic {
 							e.printStackTrace();
 						}
 					}
-					
+
 					// 说明这首歌曲已经播完了
 					Display.getDefault().asyncExec(new Runnable(){
 						@Override
@@ -237,7 +252,7 @@ public class PlayerMusic {
 							progressBar.setSelection(100);
 						}
 					});
-					
+
 					ConstantData.mainPlayer.nextSong();
 				}
 			}
@@ -245,7 +260,7 @@ public class PlayerMusic {
 
 		thread.start();
 	}
-	
+
 	/**
 	 * 时间调整
 	 * @param time
@@ -266,7 +281,7 @@ public class PlayerMusic {
 			str += ":";
 			str += temp >= 10 ? String.valueOf(temp) : "0" + temp;
 		}
-		
+
 		str += " / ";
 		temp = timeLength / 60000;
 		str += temp >= 10 ? String.valueOf(temp) : "0" + temp;
@@ -325,31 +340,5 @@ public class PlayerMusic {
 		ConstantData.clip = null;
 		startStatus = false;
 		thread.stop();
-	}
-
-	class Code {
-		private long time;
-		private String str;
-
-		public Code(long time, String str) {
-			setTime(time);
-			setStr(str);
-		}
-
-		public long getTime() {
-			return time;
-		}
-
-		public void setTime(long time) {
-			this.time = time;
-		}
-
-		public String getStr() {
-			return str;
-		}
-
-		public void setStr(String str) {
-			this.str = str;
-		}
 	}
 }

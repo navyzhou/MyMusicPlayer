@@ -427,7 +427,7 @@ public class MainPlayer {
 		 * 创建控制
 		 */
 		protected void createContent() {
-			Composite composite_4 = new Composite(parent, SWT.BORDER);
+			Composite composite_4 = new Composite(parent, SWT.NONE);
 			composite_4.setBounds(0, y * 36, 977, 36);
 			Label lab_1 = new Label(composite_4, SWT.NONE);
 			if (mf.getFlag() == 1) {
@@ -435,7 +435,7 @@ public class MainPlayer {
 			} else {
 				lab_1.setImage(SWTResourceManager.getImage(MainPlayer.class, "/images/love_1.png"));
 			}
-			lab_1.setBounds(0, 1, 32, 32);
+			lab_1.setBounds(0, 4, 32, 32);
 
 			lab_2 = new Label(composite_4, SWT.NONE);
 			lab_2.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
