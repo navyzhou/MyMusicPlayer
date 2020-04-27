@@ -60,9 +60,11 @@ public class PlayerMusic {
 		File file = new File(path);
 		if (!file.exists() || !file.isFile()) {
 			lrcs = null;
+			timeLrc = null;
 			return;
 		}
 		
+		timeLrc.clear();
 		lrcs.clear(); // 清空歌词
 
 		try (FileInputStream fis = new FileInputStream(file);BufferedReader reader = new BufferedReader(new InputStreamReader(fis,"utf-8"))){
@@ -211,7 +213,7 @@ public class PlayerMusic {
 								Display.getDefault().asyncExec(new Runnable(){
 									@Override
 									public void run() {
-										label.setText(lrcs.get(timeLrc.get(index)));
+										label.setText(lrcs.getOrDefault(timeLrc.get(index), ""));
 									}
 								});
 							}
