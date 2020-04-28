@@ -215,6 +215,10 @@ public class MainPlayer {
 		});
 
 		playerMusic = new PlayerMusic(progressBar, lrc_label, time_label);
+		
+		Label photo_label = new Label(composite, SWT.NONE);
+		photo_label.setImage(ImageUtil.makeRoundedImage("bin/images/2.gif", 70, 70));
+		photo_label.setBounds(994, 4, 70, 70);
 
 		// 播放、暂停
 		play_label.addMouseListener(new MouseAdapter() {
