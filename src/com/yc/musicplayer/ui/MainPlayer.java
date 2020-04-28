@@ -121,6 +121,7 @@ public class MainPlayer {
 		composite_3.setBounds(217, 660, 981, 58);
 
 		Label play_label = new Label(composite_3, SWT.NONE);
+		play_label.setToolTipText("播放/暂停");
 		play_label.setImage(SWTResourceManager.getImage(MainPlayer.class, "/images/timeout_2.png"));
 		play_label.setBounds(490, 4, 48, 48);
 
@@ -153,6 +154,7 @@ public class MainPlayer {
 		lrc_label.setBounds(57, 18, 332, 22);
 
 		Label like_label = new Label(composite_3, SWT.CENTER);
+		like_label.setToolTipText("喜欢");
 		like_label.setImage(SWTResourceManager.getImage(MainPlayer.class, "/images/love_2.png"));
 		like_label.setBounds(10, 12, 32, 32);
 		ShellUtil.opOver(like_label, "like_1.png", "like_2.png");
@@ -211,6 +213,7 @@ public class MainPlayer {
 
 				findMap3(selectedDir);
 				// 可以将此路径存到注册表，当下次启动的时候自动从注册表中搜索出来扫描加载
+				addMusicList(); // 添加到播放列表
 			}
 		});
 
@@ -417,6 +420,7 @@ public class MainPlayer {
 		private MusicInfo mf;
 		private int y;
 		private Label lrc_label;
+		private Composite composite;
 
 		public PlayerList(Composite parent, MusicInfo mf, int y, Label lrc_label) {
 			this.parent = parent;
@@ -431,9 +435,10 @@ public class MainPlayer {
 		 * 创建控制
 		 */
 		protected void createContent() {
-			Composite composite_4 = new Composite(parent, SWT.NONE);
-			composite_4.setBounds(0, y * 36, 977, 36);
-			Label lab_1 = new Label(composite_4, SWT.NONE);
+			composite = new Composite(parent, SWT.NONE);
+			composite.setBounds(0, y * 36, 977, 36);
+			
+			Label lab_1 = new Label(composite, SWT.NONE);
 			if (mf.getFlag() == 1) {
 				lab_1.setImage(SWTResourceManager.getImage(MainPlayer.class, "/images/love_2.png"));
 			} else {
@@ -441,22 +446,22 @@ public class MainPlayer {
 			}
 			lab_1.setBounds(0, 4, 32, 32);
 
-			lab_2 = new Label(composite_4, SWT.NONE);
+			lab_2 = new Label(composite, SWT.NONE);
 			lab_2.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
-			lab_2.setBounds(40, 5, 424, 20);
+			lab_2.setBounds(40, 8, 424, 20);
 			lab_2.setText(mf.getMname());
 
-			lab_3 = new Label(composite_4, SWT.NONE);
+			lab_3 = new Label(composite, SWT.NONE);
 			lab_3.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
-			lab_3.setBounds(546, 5, 200, 20);
+			lab_3.setBounds(546, 8, 200, 20);
 			lab_3.setText(mf.getAuthor());
 
-			lab_4 = new Label(composite_4, SWT.NONE | SWT.CENTER);
+			lab_4 = new Label(composite, SWT.NONE | SWT.CENTER);
 			lab_4.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
-			lab_4.setBounds(760, 5, 180, 20);
+			lab_4.setBounds(760, 8, 180, 20);
 			lab_4.setText(mf.getSize() + "MB");
 
-			bindEvent(composite_4);
+			bindEvent(composite);
 			bindEvent(lab_2);
 			bindEvent(lab_3);
 			bindEvent(lab_4);
@@ -507,9 +512,10 @@ public class MainPlayer {
 		 * 鼠标移上去的颜色
 		 */
 		private void overColor() {
-			lab_2.setForeground(SWTResourceManager.getColor(165, 42, 42));
-			lab_3.setForeground(SWTResourceManager.getColor(165, 42, 42));
-			lab_4.setForeground(SWTResourceManager.getColor(165, 42, 42));
+			// lab_2.setForeground(SWTResourceManager.getColor(165, 42, 42));
+			// lab_3.setForeground(SWTResourceManager.getColor(165, 42, 42));
+			// lab_4.setForeground(SWTResourceManager.getColor(165, 42, 42));
+			composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WIDGET_BACKGROUND));
 		}
 
 		/**
@@ -522,6 +528,7 @@ public class MainPlayer {
 				lab_2.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
 				lab_3.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
 				lab_4.setForeground(SWTResourceManager.getColor(SWT.COLOR_LIST_SELECTION));
+				composite.setBackground(null);
 			}
 		}
 
@@ -532,6 +539,7 @@ public class MainPlayer {
 			lab_2.setForeground(SWTResourceManager.getColor(255, 69, 0));
 			lab_3.setForeground(SWTResourceManager.getColor(255, 69, 0));
 			lab_4.setForeground(SWTResourceManager.getColor(255, 69, 0));
+			composite.setBackground(SWTResourceManager.getColor(SWT.COLOR_WHITE));
 		}
-	}
+	}	
 }

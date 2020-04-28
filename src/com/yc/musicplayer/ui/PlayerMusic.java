@@ -213,7 +213,7 @@ public class PlayerMusic {
 								Display.getDefault().asyncExec(new Runnable(){
 									@Override
 									public void run() {
-										label.setText(lrcs.getOrDefault(timeLrc.get(index), ""));
+										label.setText(lrcs.getOrDefault(timeLrc.get(index - 1), ""));
 									}
 								});
 							}
@@ -235,7 +235,17 @@ public class PlayerMusic {
 							}
 						});
 
-						if (time == timeLength) {
+						// 说明这首歌曲已经播完了
+						if (time -  10 == timeLength) {
+							startStatus = false;
+							
+							Display.getDefault().asyncExec(new Runnable(){
+								@Override
+								public void run() {
+									progressBar.setSelection(100);
+									time_label.setText(showTime(timeLength, timeLength));
+								}
+							});
 							break;
 						}
 
@@ -245,15 +255,6 @@ public class PlayerMusic {
 							e.printStackTrace();
 						}
 					}
-
-					// 说明这首歌曲已经播完了
-					Display.getDefault().asyncExec(new Runnable(){
-						@Override
-						public void run() {
-							time_label.setText(showTime(time, timeLength));
-							progressBar.setSelection(100);
-						}
-					});
 
 					ConstantData.mainPlayer.nextSong();
 				}
